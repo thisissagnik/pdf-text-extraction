@@ -97,11 +97,11 @@ def extract_fields_from_pdf(section_keywords, pdf_path):
     sec3 = sections.get("section_3", "")
     sec16 = sections.get("section_16", "")
 
-    product_name = extract_field_with_multiline_support(sec1, ["Product name", "Chemical name"])
-    product_code = extract_field_with_multiline_support(sec1, ["Product code", "Product number"])
-    manufacturer = extract_field_with_multiline_support(sec1, ["Company name of supplier", "Manufacturer", "Company name","Company Identification"])
-    usage = extract_field_with_multiline_support(sec1, ["Recommended use", "Intended use", "Use","Identified uses"])
-    revision_date = extract_field_with_multiline_support(sec1, ["Revision Date", "Date of revision"])
+    product_name = extract_field_with_multiline_support(sec1, ["Product name", "Chemical name","Trade name","Identification of the substance","Identification"])
+    product_code = extract_field_with_multiline_support(sec1, ["Product code", "Product number","Article number","cataloge number"])
+    manufacturer = extract_field_with_multiline_support(sec1, ["Company name of supplier", "Manufacturer", "Company name","Company Identification","Supplier","Manufacturer/Supplier","Company"])
+    usage = extract_field_with_multiline_support(sec1, ["Recommended use", "Intended use", "Use","Identified uses","Aplication of the substance"])
+    revision_date = extract_field_with_multiline_support(sec1, ["Revision Date", "Date of revision","Revision"])
 
     # if revision_date is not found in section 1, check section 16
     if not revision_date:
