@@ -18,15 +18,28 @@ def extract_sections_by_keywords(text, section_keywords):
             keyword_lookup[keyword.lower()] = sec
 
     def match_section_header(line):
-        for keyword in keyword_lookup:
-            if re.search(rf"\b{re.escape(keyword)}\b", line, re.IGNORECASE):
-                return keyword_lookup[keyword]
+        # for keyword in keyword_lookup:
+        #     if re.search(rf"\b{re.escape(keyword)}\b", line, re.IGNORECASE):
+        #         return keyword_lookup[keyword]
+        # if (
+        #     re.match(r"(Section\s+)?4(\.|:)?\s", line.strip(), re.IGNORECASE)
+        #     or "First Aid Measures" in line
+        # ):
+        #     return "section_4"  # Next section marker
+        # return None
+
+        normalized = line.strip().lower()
+        section_heading_match = re.match(r"^(section\s*)?(\d{1,2})[\.\: -]+(.+)?", normalized)
+        if section_heading_match:
+            for keyword in keyword_lookup:
+                if keyword in normalized:
+                    return keyword_lookup[keyword]
         if (
             re.match(r"(Section\s+)?4(\.|:)?\s", line.strip(), re.IGNORECASE)
             or "First Aid Measures" in line
         ):
             return "section_4"  # Next section marker
-        return None
+
 
     for line in lines:
         matched_section = match_section_header(line.strip())
@@ -86,8 +99,8 @@ def extract_fields_from_pdf(section_keywords, pdf_path):
 
     product_name = extract_field_with_multiline_support(sec1, ["Product name", "Chemical name"])
     product_code = extract_field_with_multiline_support(sec1, ["Product code", "Product number"])
-    manufacturer = extract_field_with_multiline_support(sec1, ["Company name of supplier", "Manufacturer", "Company name"])
-    usage = extract_field_with_multiline_support(sec1, ["Recommended use", "Intended use", "Use"])
+    manufacturer = extract_field_with_multiline_support(sec1, ["Company name of supplier", "Manufacturer", "Company name","Company Identification"])
+    usage = extract_field_with_multiline_support(sec1, ["Recommended use", "Intended use", "Use","Identified uses"])
     revision_date = extract_field_with_multiline_support(sec1, ["Revision Date", "Date of revision"])
 
     # if revision_date is not found in section 1, check section 16
@@ -171,8 +184,9 @@ def main():
 
     for filename in os.listdir(pdf_folder):
         if filename.lower().endswith(".pdf"):
-            if filename not in test_file_list:
-                continue
+            # commented out the test file list to process all files in the folder
+            # if filename not in test_file_list:
+            #     continue
             pdf_path = os.path.join(pdf_folder, filename)
             print(f"Processing for file: {filename}")
             result = extract_fields_from_pdf(section_keywords, pdf_path)
